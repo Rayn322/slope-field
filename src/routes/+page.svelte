@@ -47,7 +47,7 @@
 
 <div class="m-8">
 	<label for="equation">Equation</label>
-	<input type="text" id="equation" bind:value={equation} />
+	<input type="text" id="equation" autocapitalize="off" autocorrect="off" bind:value={equation} />
 </div>
 
 <svg class="absolute left-0 top-0 -z-10" {width} {height} xmlns="http://www.w3.org/2000/svg">
