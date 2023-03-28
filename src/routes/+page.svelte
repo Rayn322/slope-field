@@ -1,13 +1,37 @@
 <script lang="ts">
-	import { derivative } from 'mathjs';
+	import { parse } from 'mathjs';
 	let width: number = 0;
 	let height: number = 0;
-	let equation: string;
+	let equation: string = 'x + y';
+	let equationFunction: (scope?: any) => any;
+	$: try {
+		equationFunction = parse(equation).compile().evaluate;
+	} catch (e) {
+		// ignore
+	}
 
 	const scale = 50;
 
 	const xTicks = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 	const yTicks = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+	function getCoordinates(x: number, y: number) {
+		if (equation) {
+			const slope = equationFunction({ x, y });
+			const hypotenuse = Math.sqrt(slope ** 2 + 1);
+			const length = 0.25;
+
+			// make hypotenuse a length of 1
+			const x1 = x - length / hypotenuse;
+			const y1 = y - (length * slope) / hypotenuse;
+			const x2 = x + length / hypotenuse;
+			const y2 = y + (length * slope) / hypotenuse;
+
+			return { x1, y1, x2, y2 };
+		} else {
+			return { x1: 0, y1: 0, x2: 0, y2: 0 };
+		}
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
@@ -46,12 +70,21 @@
 	<!-- plot points -->
 	{#each xTicks as x}
 		{#each yTicks as y}
+			{@const { x1, y1, x2, y2 } = getCoordinates(x, y)}
 			<circle
 				cx={width / 2 + x * scale}
 				cy={height / 2 - y * scale}
 				r={2}
 				fill="black"
 				opacity="0.2"
+			/>
+			<line
+				x1={width / 2 + x1 * scale}
+				y1={height / 2 - y1 * scale}
+				x2={width / 2 + x2 * scale}
+				y2={height / 2 - y2 * scale}
+				stroke="black"
+				opacity="0.5"
 			/>
 		{/each}
 	{/each}
