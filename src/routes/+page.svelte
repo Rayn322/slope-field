@@ -92,7 +92,7 @@
 				x2={width / 2 + x2 * scale}
 				y2={height / 2 - y2 * scale}
 				stroke="black"
-				opacity="0.5"
+				opacity="0.75"
 			/>
 		{/each}
 	{/each}
