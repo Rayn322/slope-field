@@ -17,21 +17,29 @@
 	const yTicks = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 	function getCoordinates(x: number, y: number, func: (scope?: any) => any) {
-		if (equation) {
-			const slope = func({ x, y });
-			const hypotenuse = Math.sqrt(slope ** 2 + 1);
-			const length = 0.25;
+		let slope: number;
+		let emptyLine = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
-			// make hypotenuse a length of 1
-			const x1 = x - length / hypotenuse;
-			const y1 = y - (length * slope) / hypotenuse;
-			const x2 = x + length / hypotenuse;
-			const y2 = y + (length * slope) / hypotenuse;
-
-			return { x1, y1, x2, y2 };
-		} else {
-			return { x1: 0, y1: 0, x2: 0, y2: 0 };
+		try {
+			slope = func({ x, y });
+		} catch {
+			return emptyLine;
 		}
+
+		if (isNaN(slope)) {
+			return emptyLine;
+		}
+
+		const hypotenuse = Math.sqrt(slope ** 2 + 1);
+		const length = 0.25;
+
+		// make hypotenuse a length of 1
+		const x1 = x - length / hypotenuse;
+		const y1 = y - (length * slope) / hypotenuse;
+		const x2 = x + length / hypotenuse;
+		const y2 = y + (length * slope) / hypotenuse;
+
+		return { x1, y1, x2, y2 };
 	}
 </script>
 
