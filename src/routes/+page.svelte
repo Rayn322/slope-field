@@ -3,6 +3,7 @@
 	let width: number = 0;
 	let height: number = 0;
 	let equation: string = 'x + y';
+
 	let equationFunction: (scope?: any) => any;
 	$: try {
 		equationFunction = parse(equation).compile().evaluate;
@@ -15,9 +16,9 @@
 	const xTicks = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 	const yTicks = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-	function getCoordinates(x: number, y: number) {
+	function getCoordinates(x: number, y: number, func: (scope?: any) => any) {
 		if (equation) {
-			const slope = equationFunction({ x, y });
+			const slope = func({ x, y });
 			const hypotenuse = Math.sqrt(slope ** 2 + 1);
 			const length = 0.25;
 
@@ -67,10 +68,9 @@
 		<text x={width / 2 + 15} y={height / 2 + tick * scale + 5}>{tick}</text>
 	{/each}
 
-	<!-- plot points -->
 	{#each xTicks as x}
 		{#each yTicks as y}
-			{@const { x1, y1, x2, y2 } = getCoordinates(x, y)}
+			{@const { x1, y1, x2, y2 } = getCoordinates(x, y, equationFunction)}
 			<circle
 				cx={width / 2 + x * scale}
 				cy={height / 2 - y * scale}
